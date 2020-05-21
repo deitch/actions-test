@@ -7,6 +7,7 @@ FROM scratch as runner
 ARG ARCH
 ARG OS=linux
 
+COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY ${ARCH} /file
 
 CMD ["/file"]
