@@ -30,4 +30,8 @@ jobs:
         docker run --rm --interactive "arm64v8/alpine:3.11" <<-'EOF'
         	echo 'Hello World!'
         EOF
+    - name: build-cross
+      if: github.event.action == 'multiarch'
+      run: |
+        DOCKER_BUILDKIT=1 docker build -t test:latest-arm64 -f Dockerfile --build-arg ARCH=arm64 --platform linux/arm64 .
 
