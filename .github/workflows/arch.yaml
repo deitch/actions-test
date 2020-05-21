@@ -42,6 +42,10 @@ jobs:
     - name: build-cross
       run: |
         docker buildx build -t test:latest-arm64 -f Dockerfile --build-arg ARCH=arm64 --platform linux/arm64 .
+        docker image ls
+    - name: image ls
+      run: |
+        docker image ls
     - name: tag
       run: |
         docker tag test:latest-arm64 test:new-arm64
