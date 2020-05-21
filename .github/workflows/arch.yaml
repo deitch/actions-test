@@ -1,0 +1,31 @@
+name: Test
+on: repository_dispatch
+
+jobs:
+  report:
+    name: Report
+    runs-on: ubuntu-latest
+    steps:
+    - name: ref
+      run: echo ${{ github.ref }}
+    - name: event_name
+      run: echo ${{ github.event_name }}
+    - name: uname
+      run: uname -a
+    - name: osrelease
+      run: cat /etc/os-release
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Register binfmt_misc entry for qemu-user-static
+      run: |
+        docker pull multiarch/qemu-user-static:4.2.0-7
+        docker run --rm --privileged multiarch/qemu-user-static:4.2.0-7 --reset -p yes
+    - name: test arch
+      run: |
+        docker run --rm --interactive "arm64v8/alpine:3.11" <<-'EOF'
+        	echo 'Hello World!'
+        EOF
+
