@@ -12,7 +12,7 @@ To use:
 ```console
 REPO=deitch/actions-test  # change this to your repo!
 TOKEN=mytoken             # change this to your token!
-ACTION=myaction           # change this to your action!
+ACTION=multiarch          # change this to your action!
 curl -X POST https://api.github.com/repos/${REPO}/dispatches \
 -H 'Accept: application/vnd.github.everest-preview+json' \
 -H 'Authorization: token $TOKEN' \
