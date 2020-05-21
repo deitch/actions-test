@@ -1,4 +1,4 @@
-name: Test
+name: TestMultiArch
 on: repository_dispatch
 
 jobs:
@@ -15,15 +15,17 @@ jobs:
     - name: osrelease
       run: cat /etc/os-release
 
-  build:
-    name: Build
+  run:
+    name: Run
     runs-on: ubuntu-latest
     steps:
-    - name: Register binfmt_misc entry for qemu-user-static
+    - name: Register binfmt_misc entries for qemu-user-static
+      if: github.event.action == 'multiarch'
       run: |
         docker pull multiarch/qemu-user-static:4.2.0-7
         docker run --rm --privileged multiarch/qemu-user-static:4.2.0-7 --reset -p yes
     - name: test arch
+      if: github.event.action == 'multiarch'
       run: |
         docker run --rm --interactive "arm64v8/alpine:3.11" <<-'EOF'
         	echo 'Hello World!'
