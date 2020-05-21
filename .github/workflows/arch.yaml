@@ -1,5 +1,7 @@
 name: TestMultiArch
-on: repository_dispatch
+on:
+  repository_dispatch:
+    types: [multiarch]
 
 jobs:
   report:
@@ -22,12 +24,10 @@ jobs:
     - name: checkout
       uses: actions/checkout@v2
     - name: Register binfmt_misc entries for qemu-user-static
-      if: github.event.action == 'multiarch'
       run: |
         docker pull multiarch/qemu-user-static:4.2.0-7
         docker run --rm --privileged multiarch/qemu-user-static:4.2.0-7 --reset -p yes
     - name: set buildx cross-builder
-      if: github.event.action == 'multiarch'
       run: |
         docker buildx create --name cross-builder
         docker buildx use cross-builder
@@ -35,13 +35,11 @@ jobs:
     - name: check buildx
       run: docker buildx ls
     - name: test arch
-      if: github.event.action == 'multiarch'
       run: |
         docker run --rm --interactive "arm64v8/alpine:3.11" <<-'EOF'
         	echo 'Hello World!'
         EOF
     - name: build-cross
-      if: github.event.action == 'multiarch'
       run: |
         docker buildx build -t test:latest-arm64 -f Dockerfile --build-arg ARCH=arm64 --platform linux/arm64 .
 
