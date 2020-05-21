@@ -15,6 +15,6 @@ TOKEN=mytoken             # change this to your token!
 ACTION=multiarch          # change this to your action!
 curl -X POST https://api.github.com/repos/${REPO}/dispatches \
 -H 'Accept: application/vnd.github.everest-preview+json' \
--H 'Authorization: token $TOKEN' \
---data '{"event_type": "$ACTION"}'
+-H "Authorization: token $TOKEN" \
+--data '{"event_type": "'$ACTION'"}'
 ```
