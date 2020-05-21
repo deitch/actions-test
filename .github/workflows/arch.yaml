@@ -26,6 +26,8 @@ jobs:
       run: |
         docker pull multiarch/qemu-user-static:4.2.0-7
         docker run --rm --privileged multiarch/qemu-user-static:4.2.0-7 --reset -p yes
+    - name: check buildx
+      run: docker buildx ls
     - name: test arch
       if: github.event.action == 'multiarch'
       run: |
