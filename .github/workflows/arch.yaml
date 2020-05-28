@@ -50,3 +50,12 @@ jobs:
       run: |
         docker tag test:latest-arm64 test:new-arm64
 
+  cache:
+    name: Cache Check
+    runs-on: ubuntu-latest
+    needs:
+    - run
+    steps:
+    - name: image ls
+      run: docker image ls
+
