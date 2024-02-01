@@ -8,13 +8,17 @@
             type: string
           artifact_name:
             type: string
+          artifact_run_id:
+            type: string
       workflow_call:
         inputs:
           image:
             type: string
           artifact_name:
             type: string
-    
+          artifact_run_id:
+            type: string
+      
     jobs:
       smoke:
         continue-on-error: true
@@ -28,3 +32,4 @@
             with:
               image:  ${{ inputs.image }}
               artifact_name: ${{ inputs.artifact_name }}
+              artifact_run_id: ${{ inputs.artifact_run_id }}

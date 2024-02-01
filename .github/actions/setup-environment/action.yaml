@@ -6,6 +6,8 @@ inputs:
     type: string
   artifact_name:
     type: string
+  artifact_run_id:
+    type: string
 
 runs:
   using: 'composite'
@@ -17,10 +19,12 @@ runs:
       shell: bash
     - name: Download artifact if specified
       if: inputs.artifact_name != ''
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
+        github-token: ${{ github.token }}
         name: ${{ inputs.artifact_name }}
         path: artifacts  # this is the directory where it will put the artifact, not its name
+        run-id: ${{ inputs.artifact_run_id }}
     - name: list output of artifacts
       run: |
         ls -la artifacts
