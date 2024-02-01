@@ -1,0 +1,30 @@
+---
+    name: Test
+    
+    on:
+      workflow_dispatch:
+        inputs:
+          image:
+            type: string
+          artifact_name:
+            type: string
+      workflow_call:
+        inputs:
+          image:
+            type: string
+          artifact_name:
+            type: string
+    
+    jobs:
+      smoke:
+        continue-on-error: true
+        name: Smoke tests
+        runs-on: ubuntu-latest
+        steps:
+          - name: Get code
+            uses: actions/checkout@v3
+          - name: Run Smoke tests
+            uses: ./.github/actions/run-image-test
+            with:
+              image:  ${{ inputs.image }}
+              artifact_name: ${{ inputs.artifact_name }}

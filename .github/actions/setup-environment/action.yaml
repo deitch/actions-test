@@ -1,0 +1,35 @@
+name: 'Setup environment to run eden tests'
+description: 'Setup building dependencies, build and configure eden'
+
+inputs:
+  image:
+    type: string
+  artifact_name:
+    type: string
+
+runs:
+  using: 'composite'
+  steps:
+    - name: report args
+      run: |
+        echo "image: ${{ inputs.image }}"
+        echo "artifact_name: ${{ inputs.artifact_name }}"
+      shell: bash
+    - name: Download artifact if specified
+      if: inputs.artifact_name != ''
+      uses: actions/download-artifact@v3
+      with:
+        name: ${{ inputs.artifact_name }}
+        path: artifacts  # this is the directory where it will put the artifact, not its name
+    - name: list output of artifacts
+      run: |
+        ls -la artifacts
+      # expect to find in the directory a file named the same name as we uploaded, which
+      # is identical to the name of the artifact with .tar at the end, i.e. ${{ inputs.artifact_name }}.tar
+      shell: bash
+    - name: Load containers to docker if specified
+      if: inputs.artifact_name != ''
+      run: |
+        docker load -i artifacts/${{ inputs.artifact_name }}.tar
+      shell: bash
+
