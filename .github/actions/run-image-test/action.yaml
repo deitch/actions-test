@@ -11,7 +11,7 @@ runs:
   using: 'composite'
   steps:
     - name: Setup Environment
-      uses: ./.github/actions/setup-environment
+      uses: deitch/actions-test/.github/actions/setup-environment@master
       with:
         image: ${{ inputs.image }}
         artifact_name: ${{ inputs.artifact_name }}
