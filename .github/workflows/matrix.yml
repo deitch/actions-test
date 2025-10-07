@@ -1,0 +1,62 @@
+---
+name: Matrix
+   
+
+on:
+  workflow_dispatch:
+    inputs:
+      artifact-name:
+        description: "Name to use for the final collated artifact"
+        required: true
+        type: string
+      os:
+        description: "OS list"
+        type: string
+        default: '["ubuntu-22.04","ubuntu-24.04"]'
+      mode:
+        description: "Mode list"
+        type: string
+        default: '["newlib","linux","musl","uclibc"]'
+      target:
+        description: "Target list"
+        type: string
+        default: '["rv32gc-ilp32d","rv64gc-lp64d"]'
+      compiler:
+        description: "Compiler list"
+        type: string
+        default: '["gcc","llvm"]'
+      sim:
+        description: "Simulator"
+        type: string
+        default: '[""]'
+
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report inputs
+        run: |
+          echo "Artifact name: ${{ inputs.artifact-name }}"
+          echo "OS list:       ${{ inputs.os }}"
+          echo "Mode list:     ${{ inputs.mode }}"
+          echo "Target list:   ${{ inputs.target }}"
+          echo "Compiler list: ${{ inputs.compiler }}"
+          echo "Simulator:     ${{ inputs.sim }}"
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ${{ fromJSON(inputs.os) }}
+        mode: ${{ fromJSON(inputs.mode) }}
+        target: ${{ fromJSON(inputs.target) }}
+        compiler: ${{ fromJSON(inputs.compiler) }}
+        sim: ${{ fromJSON(inputs.sim) }}
+    steps:
+      - name: State my mix
+        run: |
+          echo "OS: ${{ matrix.os }}"
+          echo "Mode: ${{ matrix.mode }}"
+          echo "Target: ${{ matrix.target }}"
+          echo "Compiler: ${{ matrix.compiler }}"
+          echo "Simulator: ${{ matrix.sim }}"
