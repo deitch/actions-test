@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  
+jobs:
+  build:
+    continue-on-error: true
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        mode: ["a","b"]
+        target: ["one","two"]
+    steps:
+      - name: Get code
+        uses: actions/checkout@v3
+      - name: Create some artifacts
+        run: |
+          echo "This is mode ${{ matrix.mode }} and target ${{ matrix.target }}" > artifact-${{ matrix.mode }}-${{ matrix.target }}.txt
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-${{ matrix.mode }}-${{ matrix.target }}
+          path: artifact-${{ matrix.mode }}-${{ matrix.target }}.txt
+
+  create-release:
+    needs: [build]
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+    env:
+      ARTIFACTS_DIR: artifacts
+    steps:
+      - name:  Run Configuration Commands
+        id: metadata
+        run: |
+          DATESTAMP="$(date --utc '+%Y.%m.%d')"
+          echo "Version: ${DATESTAMP}-nightly"
+
+          # Setup environment variables
+          echo "datestamp=${DATESTAMP}" >> $GITHUB_OUTPUT
+          echo "dateword=$(date --utc '+%B %d, %Y')" >> $GITHUB_OUTPUT
+        shell: bash
+      - name: Download Built Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ env.ARTIFACTS_DIR }}
+          merge-multiple: true
+      - name: List downloaded artifacts
+        run: |
+          echo "Contents of ${{ env.ARTIFACTS_DIR }}"
+          ls -R ${{ env.ARTIFACTS_DIR }}
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.metadata.outputs.datestamp }}
+          name: "Nightly: ${{ steps.metadata.outputs.dateword }}"
+          body: |
+            ${{ steps.metadata.outputs.datestamp }}-release
+          draft: false
+          files: |
+            ${{ env.ARTIFACTS_DIR }}/*
