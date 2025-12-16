@@ -28,5 +28,6 @@ jobs:
       uses: docker/build-push-action@v6
       with:
         push: false
+        context: . # this should be what explicitly includes the .git dir
         file: gitindocker/Dockerfile
         tags: git-in-docker:latest
